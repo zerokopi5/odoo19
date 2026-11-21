@@ -5,7 +5,7 @@
   },
   "remoteUser": "node",
   "updateRemoteUserUID": true,
-  "postCreateCommand": "npm ci && npx remotion browser ensure && git config core.hooksPath .githooks",
+  "postCreateCommand": "bash -lc 'npm ci; npx remotion browser ensure || true; bash scripts/install-opencode.sh || true; git config core.hooksPath .githooks'",
   "postAttachCommand": "echo 'Ready. Start the studio with: npm run dev'",
   "forwardPorts": [3000],
   "portsAttributes": {

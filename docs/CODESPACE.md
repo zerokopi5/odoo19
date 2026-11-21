@@ -13,8 +13,12 @@ Saat selesai, container otomatis menjalankan:
 
 ```
 npm ci
-npx remotion browser ensure   # unduh Chrome Headless Shell (~100 MB)
+npx remotion browser ensure      # unduh Chrome Headless Shell (~100 MB)
+bash scripts/install-opencode.sh # unduh + pasang opencode (~1 menit)
 ```
+
+Ketiganya best-effort: kalau satu gagal (mis. jaringan lambat), container tetap
+connect dan kamu bisa jalankan ulang perintahnya manual di terminal.
 
 ## 2. Login opencode (sekali saja)
 

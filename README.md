@@ -14,7 +14,7 @@ nothing to install locally.
 | --- | --- |
 | Node.js | 22 (devcontainer base image) |
 | ffmpeg | Debian apt |
-| opencode | latest v2 (`https://opencode.ai/v2/install`) |
+| opencode | `scripts/install-opencode.sh` at create time (not baked into the image) |
 | Chrome Headless Shell | `npx remotion browser ensure` at create time |
 
 ## Render

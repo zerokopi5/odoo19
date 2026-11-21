@@ -1,5 +1,7 @@
 # Dev container for the odoo19 video workspace.
-# Node 22 + ffmpeg + opencode + everything Remotion's headless Chrome needs.
+# Node 22 + ffmpeg + everything Remotion's headless Chrome needs.
+# opencode is installed after create (scripts/install-opencode.sh) so a slow
+# binary download can never block the container from starting.
 FROM mcr.microsoft.com/devcontainers/typescript-node:22-bookworm
 
 USER root
@@ -16,14 +18,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libglib2.0-0 libgdk-pixbuf-2.0-0 libgtk-3-0 \
         fonts-liberation fonts-noto-color-emoji \
     && rm -rf /var/lib/apt/lists/*
-
-# opencode (v2) installed system-wide so it works for any shell/user.
-RUN curl -fsSL https://opencode.ai/v2/install | bash \
-    && install -m 755 /root/.opencode/bin/opencode /usr/local/bin/opencode \
-    && if [ -f /root/.opencode/bin/opencode2 ]; then \
-         install -m 755 /root/.opencode/bin/opencode2 /usr/local/bin/opencode2; \
-       fi \
-    && opencode --version
 
 USER node
 WORKDIR /workspaces/odoo19
