@@ -20,7 +20,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # opencode (v2) installed system-wide so it works for any shell/user.
 RUN curl -fsSL https://opencode.ai/v2/install | bash \
     && install -m 755 /root/.opencode/bin/opencode /usr/local/bin/opencode \
-    && install -m 755 /root/.opencode/bin/opencode2 /usr/local/bin/opencode2 \
+    && if [ -f /root/.opencode/bin/opencode2 ]; then \
+         install -m 755 /root/.opencode/bin/opencode2 /usr/local/bin/opencode2; \
+       fi \
     && opencode --version
 
 USER node
