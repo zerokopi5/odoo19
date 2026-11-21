@@ -1,0 +1,51 @@
+name: render
+
+on:
+  workflow_dispatch:
+    inputs:
+      composition:
+        description: "Composition ID (Promo, Wide, ...)"
+        required: true
+        default: "Promo"
+      frames:
+        description: "Optional frame range, e.g. 0-90 (empty = all)"
+        required: false
+        default: ""
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install ffmpeg + Chrome deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends ffmpeg \
+            libnss3 libatk1.0-0 libatk-bridge2.0-0 libgbm1 libasound2 \
+            libxkbcommon0 libxrandr2 libxtst6 libpango-1.0-0 libcairo2 libcups2
+
+      - run: npm ci
+      - run: npx remotion browser ensure
+
+      - name: Render
+        run: |
+          if [ -n "${{ inputs.frames }}" ]; then
+            npx remotion render src/index.ts "${{ inputs.composition }}" \
+              "out/${{ inputs.composition }}.mp4" --frames="${{ inputs.frames }}"
+          else
+            npx remotion render src/index.ts "${{ inputs.composition }}" \
+              "out/${{ inputs.composition }}.mp4"
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: "${{ inputs.composition }}"
+          path: out/*.mp4
+          if-no-files-found: error

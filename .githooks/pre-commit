@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# Pre-commit guard: refuse to commit credentials.
+# Installed by: git config core.hooksPath .githooks
+set -euo pipefail
+
+blocked=0
+
+# 1) Forbidden paths.
+while IFS= read -r f; do
+  case "$f" in
+    *auth.json|*.env|*.env.*|*.pem|*.key|id_rsa*|id_ed25519*|*credentials*)
+      echo "BLOCKED (path): $f" >&2
+      blocked=1
+      ;;
+  esac
+done < <(git diff --cached --name-only --diff-filter=ACMR)
+
+# 2) Forbidden content patterns in staged additions (this hook file is exempt).
+patterns='sk-[A-Za-z0-9_-]{20,}|ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|-----BEGIN [A-Z ]*PRIVATE KEY-----|(ANTHROPIC|OPENROUTER|OPENAI|GEMINI)_API_KEY=[A-Za-z0-9_-]{16,}'
+files=$(git diff --cached --name-only --diff-filter=ACMR | grep -v '^\.githooks/' || true)
+if [ -n "$files" ]; then
+  hits=$(git diff --cached -U0 -- $files | grep -E '^\+' | grep -nE "$patterns" || true)
+  if [ -n "$hits" ]; then
+    echo "BLOCKED (secret pattern in staged diff):" >&2
+    echo "$hits" | sed 's/^/  /' >&2
+    blocked=1
+  fi
+fi
+
+if [ "$blocked" -ne 0 ]; then
+  echo "" >&2
+  echo "Commit aborted. Remove the secret, rotate it if it was real, then retry." >&2
+  exit 1
+fi
+
+exit 0

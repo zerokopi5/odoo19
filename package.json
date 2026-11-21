@@ -1,0 +1,27 @@
+{
+  "name": "odoo19-video",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Remotion video workspace (opencode + ffmpeg pipeline)",
+  "scripts": {
+    "dev": "remotion studio",
+    "studio": "remotion studio",
+    "render": "remotion render",
+    "still": "remotion still",
+    "render:promo": "remotion render src/index.ts Promo out/promo.mp4",
+    "render:wide": "remotion render src/index.ts Wide out/wide.mp4",
+    "typecheck": "tsc --noEmit",
+    "upgrade": "remotion upgrade"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.545",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "remotion": "4.0.545"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.8",
+    "@types/react-dom": "19.1.6",
+    "typescript": "5.9.2"
+  }
+}
